@@ -1,0 +1,373 @@
+<aside class="navbar navbar-vertical navbar-expand-lg bg-website">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <h1 class="navbar-brand navbar-brand-autodark">
+            <a href="{{{ route('cms.users.dashboard') }}}">
+                <img src="{{ asset('img/logo.svg') }}"  />
+            </a>
+        </h1>
+        @foreach(Auth::user()->roles as $role)
+        @php
+            $role_permission = \App\Models\CmsRolePermission::where('cms_role_id',$role->id)
+                                ->pluck('cms_permission_id')->toArray();
+            $rolePermission = [];
+            foreach($role_permission as $permission){
+                $cmsPermissions = \App\Models\CmsPermission::select('slug')->where('id',$permission)
+                                ->where('is_active',true)->first();
+                $rolePermission[] = $cmsPermissions->slug;
+            }
+        @endphp
+        <div class="navbar-nav flex-row d-lg-none">
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
+                    <span class="avatar avatar-sm">
+                        <i class="ti ti-user-circle icon"></i>
+                    </span>
+                    <div class="d-none d-xl-block ps-2">
+                        <div>{{ Auth::user()->name }}</div>
+                    </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <div class="p-2">
+                        @if(empty(Auth::user()->roles) === false)
+                            <b>Roles</b>
+                            <ul class="list-unstyled">
+                                @foreach(Auth::user()->roles as $role)
+                                    <li><span class="badge badge-secondary">{{{ $role->name }}}</span></li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ route('cms.users.logout') }}" class="dropdown-item @if(!in_array('cms.users.logout',$rolePermission)) hidden @endif">Logout</a>
+                </div>
+            </div>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-menu">
+            <ul class="navbar-nav pt-lg-3">
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.users.dashboard'])) active @endif @if(!in_array('cms.users.dashboard',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.users.dashboard') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-dashboard icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Dashboard
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.branchlocators.add','cms.branchlocators.view','cms.branchlocators.edit','cms.branchlocators.search','cms.branchlocators.list'])) active @endif @if(!in_array('cms.branchlocators.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.branchlocators.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-git-branch icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Branch Locators
+                        </span>
+                    </a>
+                </li>
+
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.media-release.add','cms.media-release.view','cms.media-release.edit','cms.media-release.search','cms.media-release.list'])) active @endif @if(!in_array('cms.media-release.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.media-release.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-movie icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Media Release
+                        </span>
+                    </a>
+                </li>
+
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.articles.add','cms.articles.view','cms.articles.edit','cms.articles.search','cms.articles.list'])) active @endif @if(!in_array('cms.articles.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.articles.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-files icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Articles
+                        </span>
+                    </a>
+                </li>
+
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.learningcentre.add','cms.learningcentre.view','cms.learningcentre.edit','cms.learningcentre.search','cms.learningcentre.list'])) active @endif @if(!in_array('cms.learningcentre.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.learningcentre.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-book icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Learning Centre
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.testimonials.add','cms.testimonials.search','cms.testimonials.view','cms.testimonials.edit','cms.testimonials.list'])) active @endif @if(!in_array('cms.testimonials.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.testimonials.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-blockquote icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Testimonials
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.auction.search','cms.auction.add','cms.auction.view','cms.auction.edit','cms.auction.list'])) active @endif @if(!in_array('cms.auction.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.auction.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-hammer icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Auction
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.meta.list', 'cms.meta.add', 'cms.meta.edit', 'cms.meta.view', 'cms.meta.search'])) active @endif @if(!in_array('cms.meta.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.meta.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-file icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Meta
+                        </span>
+                    </a>
+                </li>
+
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.news.list', 'cms.news.add', 'cms.news.edit', 'cms.news.view', 'cms.news.search'])) active @endif @if(!in_array('cms.news.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.news.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-book icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            News
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.banner.list', 'cms.banner.add', 'cms.banner.edit', 'cms.banner.view', 'cms.banner.search'])) active @endif @if(!in_array('cms.banner.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.banner.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-package icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Banner
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.emailsubscribe.list',  'cms.emailsubscribe.search'])) active @endif @if(!in_array('cms.emailsubscribe.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.emailsubscribe.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-file icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Email Subscribe
+                        </span>
+                    </a>
+                </li>
+	            
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.notification.add','cms.notification.search','cms.notification.view','cms.notification.edit','cms.notification.list'])) active @endif @if(!in_array('cms.notification.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.notification.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-bell-ringing icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Notifications
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.contactus.search','cms.contactus.list'])) active @endif @if(!in_array('cms.contactus.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.contactus.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-phone icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Contact Us
+                        </span>
+                    </a>
+                </li>
+                
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.product.list', 'cms.product.add', 'cms.product.edit', 'cms.product.view', 'cms.product.search'])) active @endif @if(!in_array('cms.product.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.product.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-file icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Products
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.media.list', 'cms.media.search'])) active @endif @if(!in_array('cms.media.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.media.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-file icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Media
+                        </span>
+                    </a>
+                </li>
+
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.redirection.list', 'cms.redirection.search'])) active @endif @if(!in_array('cms.redirection.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.redirection.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-exchange icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            301 Redirection
+                        </span>
+                    </a>
+                </li>
+
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.redirection302.list', 'cms.redirection302.search'])) active @endif @if(!in_array('cms.redirection302.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.redirection302.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-exchange icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            302 Redirection
+                        </span>
+                    </a>
+                </li>
+
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.faq.list', 'cms.faq.add', 'cms.faq.edit', 'cms.faq.view', 'cms.faq.search'])) active @endif @if(!in_array('cms.faq.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.faq.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-zoom-question icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            FAQ
+                        </span>
+                    </a>
+                </li>
+                
+                <li class="nav-item @if(in_array(Route::currentRouteName(), ['cms.investors.list', 'cms.investors.add', 'cms.investors.edit', 'cms.investors.view', 'cms.investors.search'])) active @endif @if(!in_array('cms.investors.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.investors.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-cash-banknote icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Investors
+                            </span>
+                    </a>
+                </li>
+                <li class="nav-item @if(!in_array('cms.downloads.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.downloads.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-download icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Downloads
+                        </span>
+                    </a>
+                </li>
+
+                <li class="nav-item  @if(in_array(Route::currentRouteName(), ['cms.menus.list', 'cms.menus.add', 'cms.menus.edit', 'cms.menus.view', 'cms.menus.search'])) active @endif @if(!in_array('cms.menus.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.menus.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-list icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Menus
+                        </span>
+                    </a>
+                </li>
+
+                <li class="nav-item  @if(in_array(Route::currentRouteName(), ['cms.common-css.edit', 'cms.menus.update'])) active @endif @if(!in_array('cms.common-css.edit',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.common-css.edit', ['id' => 1]) }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-list icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Common CSS
+                        </span>
+                    </a>
+                </li>
+                
+               <li class="nav-item  @if(in_array(Route::currentRouteName(), ['cms.product-slug.list', 'cms.product-slug.add','cms.product-slug.edit','cms.product-slug.status','cms.product-slug.update'])) active @endif @if(!in_array('cms.product-slug.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.product-slug.list') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-file icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                         Product Slug
+                        </span>
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown @if(in_array(Route::currentRouteName(), ['cms.users.list', 'cms.users.add', 'cms.users.save', 'cms.users.edit', 'cms.users.update', 'cms.users.delete', 'cms.users.search', 'cms.users.status','cms.users.logins','cms.roles.list', 'cms.roles.add', 'cms.roles.save', 'cms.roles.edit', 'cms.roles.update', 'cms.roles.delete', 'cms.roles.status', 'cms.roles.search', 'cms.permissions.search', 'cms.permissions.status','cms.permissions.list'])) active @endif @if(!in_array('cms.branchlocators.list',$rolePermission)) hidden @endif">
+                    <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="false" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-settings icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Settings
+                        </span>
+                    </a>
+                    <div class="dropdown-menu @if(in_array(Route::currentRouteName(), ['cms.users.list', 'cms.users.add', 'cms.users.save', 'cms.users.edit', 'cms.users.update', 'cms.users.delete', 'cms.users.search', 'cms.users.status', 'cms.users.logins', 'cms.roles.list', 'cms.roles.add', 'cms.roles.save', 'cms.roles.edit', 'cms.roles.update', 'cms.roles.delete','cms.roles.status', 'cms.roles.search', 'cms.permissions.search', 'cms.permissions.status', 'cms.permissions.list'])) show @endif">
+                        <div class="dropdown-menu-columns">
+                            <div class="dropdown-menu-column">
+                                <a class="dropdown-item @if(in_array(Route::currentRouteName(), ['cms.users.list', 'cms.users.add', 'cms.users.save', 'cms.users.edit', 'cms.users.update', 'cms.users.delete', 'cms.users.search', 'cms.users.status', 'cms.users.logins'])) active @endif" href="{{ route('cms.users.list') }}" >
+                                    <i class="ti ti-arrow-right icon"></i> CMS Users
+                                </a>
+                                <a class="dropdown-item @if(in_array(Route::currentRouteName(), [ 'cms.roles.list', 'cms.roles.add', 'cms.roles.save', 'cms.roles.edit', 'cms.roles.update', 'cms.roles.delete', 'cms.roles.search', 'cms.roles.status'])) active @endif" href="{{ route('cms.roles.list') }}" >
+                                    <i class="ti ti-arrow-right icon"></i> CMS Roles
+                                </a>
+                                <a class="dropdown-item @if(in_array(Route::currentRouteName(), ['cms.permissions.list', 'cms.permissions.search', 'cms.permissions.status'])) active @endif" href="{{ route('cms.permissions.list') }}" >
+                                    <i class="ti ti-arrow-right icon"></i> CMS Permissions
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="nav-item @if(!in_array('cms.users.logout',$rolePermission)) hidden @endif">
+                    <a class="nav-link" href="{{ route('cms.users.logout') }}" >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <i class="ti ti-logout icon"></i>
+                        </span>
+                        <span class="nav-link-title">
+                            Logout
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </div>   
+        @endforeach    
+    </div>
+</aside>
+<header class="navbar navbar-expand-md navbar-light d-none d-lg-flex d-print-none">
+    <div class="container-xl">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu"> <span class="navbar-toggler-icon"></span> </button>
+        <div class="navbar-nav flex-row order-md-last">
+            <div class="nav-item mx-2 badge badge-light">
+                <b>Last Login:</b>{{ Auth::user()->last_login }}
+            </div>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu" aria-expanded="false"> 
+                    <span class="avatar avatar-sm">
+                        <i class="ti ti-user-circle icon"></i>
+                    </span>
+                    <div class="d-none d-xl-block ps-2">
+                        <div>{{ Auth::user()->name }}</div>
+                    </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"> 
+                    <div class="p-2">
+                        @if(empty(Auth::user()->roles) === false)
+                            <b>Roles</b>
+                            <ul class="list-unstyled">
+                                @foreach(Auth::user()->roles as $role)
+                                    <li><span class="badge badge-secondary">{{{ $role->name }}}</span></li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+                    <div class="dropdown-divider"></div> 
+                    <a href="{{ route('cms.users.logout') }}" class="dropdown-item">Logout</a> 
+                </div>
+            </div>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-menu">
+            <div>
+                @section('page_action') @show
+            </div>
+        </div>
+    </div>
+</header>
